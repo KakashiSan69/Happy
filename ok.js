@@ -1,298 +1,236 @@
-import React, { useEffect, memo, useMemo } from "react"
-import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, UserCheck } from "lucide-react"
+import React, { useState, useEffect, useCallback, memo } from "react"
+import { Github, Linkedin, Mail, ExternalLink, Instagram, Sparkles } from "lucide-react"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
 // Memoized Components
-const Header = memo(() => (
-  <div className="text-center lg:mb-8 mb-2 px-[5%]">
-    <div className="inline-block relative group">
-      <h2 
-        className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]" 
-        data-aos="zoom-in-up"
-        data-aos-duration="600"
-      >
-        About Me
-      </h2>
-    </div>
-    <p 
-      className="mt-2 text-gray-400 max-w-2xl mx-auto text-base sm:text-lg flex items-center justify-center gap-2"
-      data-aos="zoom-in-up"
-      data-aos-duration="800"
-    >
-      <Sparkles className="w-5 h-5 text-purple-400" />
-      Transforming my ideas into digital experiences
-      <Sparkles className="w-5 h-5 text-purple-400" />
-    </p>
-  </div>
-));
-
-const ProfileImage = memo(() => (
-  <div className="flex justify-end items-center sm:p-12 sm:py-0 sm:pb-0 p-0 py-2 pb-2">
-    <div 
-      className="relative group" 
-      data-aos="fade-up"
-      data-aos-duration="1000"
-    >
-      {/* Optimized gradient backgrounds with reduced complexity for mobile */}
-      <div className="absolute -inset-6 opacity-[25%] z-0 hidden sm:block">
-        <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-indigo-500 to-purple-600 rounded-full blur-2xl animate-spin-slower" />
-        <div className="absolute inset-0 bg-gradient-to-l from-fuchsia-500 via-rose-500 to-pink-600 rounded-full blur-2xl animate-pulse-slow opacity-50" />
-        <div className="absolute inset-0 bg-gradient-to-t from-blue-600 via-cyan-500 to-teal-400 rounded-full blur-2xl animate-float opacity-50" />
-      </div>
-
-      <div className="relative">
-        <div className="w-72 h-72 sm:w-80 sm:h-80 rounded-full overflow-hidden shadow-[0_0_40px_rgba(120,119,198,0.3)] transform transition-all duration-700 group-hover:scale-105">
-          <div className="absolute inset-0 border-4 border-white/20 rounded-full z-20 transition-all duration-700 group-hover:border-white/40 group-hover:scale-105" />
-          
-          {/* Optimized overlay effects - disabled on mobile */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40 z-10 transition-opacity duration-700 group-hover:opacity-0 hidden sm:block" />
-          <div className="absolute inset-0 bg-gradient-to-t from-purple-500/20 via-transparent to-blue-500/20 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 hidden sm:block" />
-          
-          <img
-            src="/Photo.jpg"
-            alt="Profile"
-            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-2"
-            loading="lazy"
-          />
-
-          {/* Advanced hover effects - desktop only */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-700 z-20 hidden sm:block">
-            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-            <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-white/10 to-transparent transform translate-y-full group-hover:-translate-y-full transition-transform duration-1000 delay-100" />
-            <div className="absolute inset-0 rounded-full border-8 border-white/10 scale-0 group-hover:scale-100 transition-transform duration-700 animate-pulse-slow" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-));
-
-const StatCard = memo(({ icon: Icon, color, value, label, description, animation }) => (
-  <div data-aos={animation} data-aos-duration={1300} className="relative group">
-    <div className="relative z-10 bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 border border-white/10 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl h-full flex flex-col justify-between">
-      <div className={`absolute -z-10 inset-0 bg-gradient-to-br ${color} opacity-10 group-hover:opacity-20 transition-opacity duration-300`}></div>
-      
-      <div className="flex items-center justify-between mb-4">
-        <div className="w-16 h-16 rounded-full flex items-center justify-center bg-white/10 transition-transform group-hover:rotate-6">
-          <Icon className="w-8 h-8 text-white" />
-        </div>
-        <span 
-          className="text-4xl font-bold text-white"
-          data-aos="fade-up-left"
-          data-aos-duration="1500"
-          data-aos-anchor-placement="top-bottom"
-        >
-          {value}
+const StatusBadge = memo(() => (
+  <div className="inline-block animate-float lg:mx-0" data-aos="zoom-in" data-aos-delay="400">
+    <div className="relative group">
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-full blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
+      <div className="relative px-3 sm:px-4 py-2 rounded-full bg-black/40 backdrop-blur-xl border border-white/10">
+        <span className="bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-transparent bg-clip-text sm:text-sm text-[0.7rem] font-medium flex items-center">
+          <Sparkles className="sm:w-4 sm:h-4 w-3 h-3 mr-2 text-blue-400" />
+          Ready to Innovate
         </span>
       </div>
-
-      <div>
-        <p 
-          className="text-sm uppercase tracking-wider text-gray-300 mb-2"
-          data-aos="fade-up"
-          data-aos-duration="800"
-          data-aos-anchor-placement="top-bottom"
-        >
-          {label}
-        </p>
-        <div className="flex items-center justify-between">
-          <p 
-            className="text-xs text-gray-400"
-            data-aos="fade-up"
-            data-aos-duration="1000"
-            data-aos-anchor-placement="top-bottom"
-          >
-            {description}
-          </p>
-          <ArrowUpRight className="w-4 h-4 text-white/50 group-hover:text-white transition-colors" />
-        </div>
-      </div>
     </div>
   </div>
 ));
 
-const AboutPage = () => {
-  // Memoized calculations
-  const { totalProjects, totalCertificates, YearExperience } = useMemo(() => {
-    const storedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-    const storedCertificates = JSON.parse(localStorage.getItem("certificates") || "[]");
-    
-    const startDate = new Date("2021-11-06");
-    const today = new Date();
-    const experience = today.getFullYear() - startDate.getFullYear() -
-      (today < new Date(today.getFullYear(), startDate.getMonth(), startDate.getDate()) ? 1 : 0);
+const MainTitle = memo(() => (
+  <div className="space-y-2" data-aos="fade-up" data-aos-delay="600">
+    <h1 className="text-5xl sm:text-6xl md:text-6xl lg:text-6xl xl:text-7xl font-bold tracking-tight">
+      <span className="relative inline-block">
+        <span className="absolute -inset-2 bg-gradient-to-r from-[#6366f1] to-[#a855f7] blur-2xl opacity-20"></span>
+        <span className="relative bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent">
+          Full Stack & Automation
+        </span>
+      </span>
+      <br />
+      <span className="relative inline-block mt-2">
+        <span className="absolute -inset-2 bg-gradient-to-r from-[#6366f1] to-[#a855f7] blur-2xl opacity-20"></span>
+        <span className="relative bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent">
+          Engineer
+        </span>
+      </span>
+    </h1>
+  </div>
+));
 
-    return {
-      totalProjects: storedProjects.length,
-      totalCertificates: storedCertificates.length,
-      YearExperience: experience
-    };
-  }, []);
+const TechStack = memo(({ tech }) => (
+  <div className="px-4 py-2 hidden sm:block rounded-full bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 hover:bg-white/10 transition-colors">
+    {tech}
+  </div>
+));
 
-  // Optimized AOS initialization
+const CTAButton = memo(({ href, text, icon: Icon }) => (
+  <a href={href}>
+    <button className="group relative w-[160px]">
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#4f52c9] to-[#8644c5] rounded-xl opacity-50 blur-md group-hover:opacity-90 transition-all duration-700"></div>
+      <div className="relative h-11 bg-[#030014] backdrop-blur-xl rounded-lg border border-white/10 leading-none overflow-hidden">
+        <div className="absolute inset-0 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 bg-gradient-to-r from-[#4f52c9]/20 to-[#8644c5]/20"></div>
+        <span className="absolute inset-0 flex items-center justify-center gap-2 text-sm group-hover:gap-3 transition-all duration-300">
+          <span className="bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent font-medium z-10">
+            {text}
+          </span>
+          <Icon className={`w-4 h-4 text-gray-200 ${text === 'Contact' ? 'group-hover:translate-x-1' : 'group-hover:rotate-45'} transform transition-all duration-300 z-10`} />
+        </span>
+      </div>
+    </button>
+  </a>
+));
+
+const SocialLink = memo(({ icon: Icon, link }) => (
+  <a href={link} target="_blank" rel="noopener noreferrer">
+    <button className="group relative p-3">
+      <div className="absolute inset-0 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
+      <div className="relative rounded-xl bg-black/50 backdrop-blur-xl p-2 flex items-center justify-center border border-white/10 group-hover:border-white/20 transition-all duration-300">
+        <Icon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+      </div>
+    </button>
+  </a>
+));
+
+// Constants
+const TYPING_SPEED = 100;
+const ERASING_SPEED = 50;
+const PAUSE_DURATION = 2000;
+const WORDS = ["Self Taught Student", "Peak Curosity For Tech"];
+const TECH_STACK = ["Typescript", "Javascript", "Node.js", "Git", "FastAPI"];
+const SOCIAL_LINKS = [
+  { icon: Github, link: "https://github.com/kakashiSan69" },
+  { icon: Instagram, link: "https://www.instagram.com/const.shivu" }
+];
+
+const Home = () => {
+  const [text, setText] = useState("")
+  const [isTyping, setIsTyping] = useState(true)
+  const [wordIndex, setWordIndex] = useState(0)
+  const [charIndex, setCharIndex] = useState(0)
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [isHovering, setIsHovering] = useState(false)
+
+  // Optimize AOS initialization
   useEffect(() => {
     const initAOS = () => {
       AOS.init({
-        once: false, 
+        once: true,
+        offset: 10,
+       
       });
     };
 
     initAOS();
-    
-    // Debounced resize handler
-    let resizeTimer;
-    const handleResize = () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(initAOS, 250);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      clearTimeout(resizeTimer);
-    };
+    window.addEventListener('resize', initAOS);
+    return () => window.removeEventListener('resize', initAOS);
   }, []);
 
-  // Memoized stats data
-  const statsData = useMemo(() => [
-    {
-      icon: Code,
-      color: "from-[#6366f1] to-[#a855f7]",
-      value: totalProjects,
-      label: "Total Projects",
-      description: "Innovative web solutions crafted",
-      animation: "fade-right",
-    },
-    {
-      icon: Award,
-      color: "from-[#a855f7] to-[#6366f1]",
-      value: totalCertificates,
-      label: "Certificates",
-      description: "Professional skills validated",
-      animation: "fade-up",
-    },
-    {
-      icon: Globe,
-      color: "from-[#6366f1] to-[#a855f7]",
-      value: YearExperience,
-      label: "Years of Experience",
-      description: "Continuous learning journey",
-      animation: "fade-left",
-    },
-  ], [totalProjects, totalCertificates, YearExperience]);
+  useEffect(() => {
+    setIsLoaded(true);
+    return () => setIsLoaded(false);
+  }, []);
+
+  // Optimize typing effect
+  const handleTyping = useCallback(() => {
+    if (isTyping) {
+      if (charIndex < WORDS[wordIndex].length) {
+        setText(prev => prev + WORDS[wordIndex][charIndex]);
+        setCharIndex(prev => prev + 1);
+      } else {
+        setTimeout(() => setIsTyping(false), PAUSE_DURATION);
+      }
+    } else {
+      if (charIndex > 0) {
+        setText(prev => prev.slice(0, -1));
+        setCharIndex(prev => prev - 1);
+      } else {
+        setWordIndex(prev => (prev + 1) % WORDS.length);
+        setIsTyping(true);
+      }
+    }
+  }, [charIndex, isTyping, wordIndex]);
+
+  useEffect(() => {
+    const timeout = setTimeout(
+      handleTyping,
+      isTyping ? TYPING_SPEED : ERASING_SPEED
+    );
+    return () => clearTimeout(timeout);
+  }, [handleTyping]);
 
   return (
-    <div
-      className="h-auto pb-[10%] text-white overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] mt-10 sm-mt-0" 
-      id="About"
-    >
-      <Header />
-
-      <div className="w-full mx-auto pt-8 sm:pt-12 relative">
-        <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          <div className="space-y-6 text-center lg:text-left">
-            <h2 
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold"
+    <div className="min-h-screen bg-[#030014] overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%]" id="Home">
+      <div className={`relative z-10 transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`}>
+        <div className="container mx-auto min-h-screen">
+          <div className="flex flex-col lg:flex-row items-center justify-center h-screen md:justify-between gap-0 sm:gap-12 lg:gap-20">
+            {/* Left Column */}
+            <div className="w-full lg:w-1/2 space-y-6 sm:space-y-8 text-left lg:text-left order-1 lg:order-1 lg:mt-0"
               data-aos="fade-right"
-              data-aos-duration="1000"
-            >
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
-                Hello, I'm
-              </span>
-              <span 
-                className="block mt-2 text-gray-200"
-                data-aos="fade-right"
-                data-aos-duration="1300"
-              >
-                Shiva Sharma aka kakashi
-              </span>
-            </h2>
-            
-            <p 
-              className="text-base sm:text-lg lg:text-xl text-gray-400 leading-relaxed text-justify pb-4 sm:pb-0"
-              data-aos="fade-right"
-              data-aos-duration="1500"
-            >
-              Enthusiastic and self-driven developer with hands-on experience in WhatsApp bot development, website maintenance, and AI integrations
-            </p>
+              data-aos-delay="200">
+              <div className="space-y-4 sm:space-y-6">
+                <StatusBadge />
+                <MainTitle />
 
-               {/* Quote Section */}
-      <div 
-        className="relative bg-gradient-to-br from-[#6366f1]/5 via-transparent to-[#a855f7]/5 border border-gradient-to-r border-[#6366f1]/30 rounded-2xl p-4 my-6 backdrop-blur-md shadow-2xl overflow-hidden"
-        data-aos="fade-up"
-        data-aos-duration="1700"
-      >
-        {/* Floating orbs background */}
-        <div className="absolute top-2 right-4 w-16 h-16 bg-gradient-to-r from-[#6366f1]/20 to-[#a855f7]/20 rounded-full blur-xl"></div>
-        <div className="absolute -bottom-4 -left-2 w-12 h-12 bg-gradient-to-r from-[#a855f7]/20 to-[#6366f1]/20 rounded-full blur-lg"></div>
-        
-        {/* Quote icon */}
-        <div className="absolute top-3 left-4 text-[#6366f1] opacity-30">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/>
-          </svg>
-        </div>
-        
-        <blockquote className="text-gray-300 text-center lg:text-left italic font-medium text-sm relative z-10 pl-6">
-          "Learning AI as a professional tool, not as a replacement shii."
-        </blockquote>
-      </div>
+                {/* Typing Effect */}
+                <div className="h-8 flex items-center" data-aos="fade-up" data-aos-delay="800">
+                  <span className="text-xl md:text-2xl bg-gradient-to-r from-gray-100 to-gray-300 bg-clip-text text-transparent font-light">
+                    {text}
+                  </span>
+                  <span className="w-[3px] h-6 bg-gradient-to-t from-[#6366f1] to-[#a855f7] ml-1 animate-blink"></span>
+                </div>
 
-            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full">
-              <a href="https://drive.google.com/drive/folders/1BOm51Grsabb3zj6Xk27K-iRwI1zITcpo" className="w-full lg:w-auto">
-              <button 
-                data-aos="fade-up"
-                data-aos-duration="800"
-                className="w-full lg:w-auto sm:px-6 py-2 sm:py-3 rounded-lg bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-white font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center lg:justify-start gap-2 shadow-lg hover:shadow-xl "
-              >
-                <FileText className="w-4 h-4 sm:w-5 sm:h-5" /> Download CV
-              </button>
-              </a>
-              <a href="#Portofolio" className="w-full lg:w-auto">
-              <button 
-                data-aos="fade-up"
-                data-aos-duration="1000"
-                className="w-full lg:w-auto sm:px-6 py-2 sm:py-3 rounded-lg border border-[#a855f7]/50 text-[#a855f7] font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center lg:justify-start gap-2 hover:bg-[#a855f7]/10 "
-              >
-                <Code className="w-4 h-4 sm:w-5 sm:h-5" /> View Projects
-              </button>
-              </a>
+                {/* Description */}
+                <p className="text-base md:text-lg text-gray-400 max-w-xl leading-relaxed font-light"
+                  data-aos="fade-up"
+                  data-aos-delay="1000">
+                  BCA Student | Passionate about Technology & Development.
+                </p>
+
+                {/* Tech Stack */}
+                <div className="flex flex-wrap gap-3 justify-start" data-aos="fade-up" data-aos-delay="1200">
+                  {TECH_STACK.map((tech, index) => (
+                    <TechStack key={index} tech={tech} />
+                  ))}
+                </div>
+
+                {/* CTA Buttons */}
+                <div className="flex flex-row gap-3 w-full justify-start" data-aos="fade-up" data-aos-delay="1400">
+                  <CTAButton href="#Portofolio" text="Projects" icon={ExternalLink} />
+                  <CTAButton href="#Contact" text="Contact" icon={Mail} />
+                </div>
+
+                {/* Social Links */}
+                <div className="hidden sm:flex gap-4 justify-start" data-aos="fade-up" data-aos-delay="1600">
+                  {SOCIAL_LINKS.map((social, index) => (
+                    <SocialLink key={index} {...social} />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - WebM Video */}
+            <div className="w-full py-0 md:py-[10%] sm:py-0 lg:w-1/2 h-[260px] sm:h-[400px] lg:h-[600px] xl:h-[750px] relative flex items-center justify-center order-2 lg:order-2  mt-5 sm:mt-0"
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+              data-aos="fade-left"
+              data-aos-delay="600">
+              <div className="relative w-full opacity-90">
+                <div className={`absolute inset-0 bg-gradient-to-r from-[#6366f1]/10 to-[#a855f7]/10 rounded-3xl blur-3xl transition-all duration-700 ease-in-out ${
+                  isHovering ? "opacity-50 scale-105" : "opacity-20 scale-100"
+                }`}>
+                </div>
+
+                <div className={`relative lg:left-12 z-10 w-full opacity-90 transform transition-transform duration-500 ${
+                  isHovering ? "scale-105" : "scale-100"
+                }`}>
+                  <img
+                    src="Animation1.gif"
+                    alt="Developer Animation"
+                    className={`w-full h-full object-contain transition-all duration-500 ${
+                      isHovering 
+                        ? "scale-[95%] sm:scale-[90%] md:scale-[90%] lg:scale-[90%] rotate-2" 
+                        : "scale-[90%] sm:scale-[80%] md:scale-[80%] lg:scale-[80%]"
+                    }`}
+                  />
+                </div>
+
+                <div className={`absolute inset-0 pointer-events-none transition-all duration-700 ${
+                  isHovering ? "opacity-50" : "opacity-20"
+                }`}>
+                  <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-br from-indigo-500/10 to-purple-500/10 blur-3xl animate-[pulse_6s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all duration-700 ${
+                    isHovering ? "scale-110" : "scale-100"
+                  }`}>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <ProfileImage />
         </div>
-
-        <a href="#Portofolio">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 cursor-pointer">
-            {statsData.map((stat) => (
-              <StatCard key={stat.label} {...stat} />
-            ))}
-          </div>
-        </a>
       </div>
-
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-20px); }
-        }
-        @keyframes spin-slower {
-          to { transform: rotate(360deg); }
-        }
-        .animate-bounce-slow {
-          animation: bounce 3s infinite;
-        }
-        .animate-pulse-slow {
-          animation: pulse 3s infinite;
-        }
-        .animate-spin-slower {
-          animation: spin-slower 8s linear infinite;
-        }
-      `}</style>
+      
     </div>
   );
 };
 
-export default memo(AboutPage);
+export default memo(Home);
